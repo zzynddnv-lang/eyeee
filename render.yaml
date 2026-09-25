@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: telegram-music-bot
+    env: docker
+    plan: free
+    region: frankfurt
+    envVars:
+      - key: BOT_TOKEN
+        value: 8539604514:AAGz3fFAI1WHOYFkyS0SAk74RMs00bjh1es
+      - key: PORT
+        value: 8080
