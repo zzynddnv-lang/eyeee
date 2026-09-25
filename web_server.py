@@ -9,7 +9,8 @@ async def handle_ping(request):
     return web.json_response({
         "status": "online",
         "service": "Telegram Music Bot",
-        "username": "@musiqazuxibot"
+        "username": "@musiqazuxibot",
+        "message": "Bot muvaffaqiyatli ishlamoqda!"
     })
 
 def create_web_app():
@@ -19,11 +20,20 @@ def create_web_app():
     return app
 
 async def start_web_server():
-    """Veb serverni orqa fonda asinxron ishga tushirish."""
+    """Veb serverni orqa fonda asinxron ishga tushirish (Render va mahalliy sinov uchun)."""
     app = create_web_app()
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, "0.0.0.0", PORT)
-    await site.start()
-    logger.info(f"Veb server {PORT}-portda muvaffaqiyatli ishga tushdi (Render uchun tayyor).")
-    return runner
+    
+    port = PORT
+    for attempt in range(5):
+        try:
+            site = web.TCPSite(runner, "0.0.0.0", port)
+            await site.start()
+            logger.info(f"Veb server {port}-portda muvaffaqiyatli ishga tushdi (Render uchun tayyor).")
+            return runner
+        except OSError as e:
+            if attempt == 4:
+                raise
+            logger.warning(f"{port}-port band ekan ({e}), {port + 1}-port sinab ko'rilmoqda...")
+            port += 1
